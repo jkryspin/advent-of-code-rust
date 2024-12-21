@@ -7,3 +7,8 @@ Cargo.lock
 
 # Don't commit input files
 input
+/.idea/advent-of-code-rust.iml
+/.idea/git_toolbox_blame.xml
+/.idea/git_toolbox_prj.xml
+/.idea/modules.xml
+/.idea/vcs.xml

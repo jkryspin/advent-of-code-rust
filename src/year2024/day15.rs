@@ -18,7 +18,7 @@ pub fn part2(input: &str) -> usize {
 
     let mut sol = Solution2::new(top);
     let moves = Solution::moves(bottom);
-    for (dx, dy, c) in moves {
+    for (dx, dy, _) in moves {
         sol.move_robot(dx, dy);
     }
     sol.print();
@@ -29,7 +29,7 @@ pub fn part2(input: &str) -> usize {
             .map(|(y, row)| {
                 row.iter()
                     .enumerate()
-                    .filter(|(x, c)| **c == '[')
+                    .filter(|(_, c)| **c == '[')
                     .map(|(x, _)| (y * 100 + x))
                     .sum::<usize>()
             })
@@ -127,12 +127,12 @@ impl Solution2 {
             self.grid[y as usize][x as usize] = '.';
         } else {
             if dy < 0 || dy > 0 {
-                let mut fullL_positions: VecDeque<(i32, i32)> = VecDeque::new();
+                let mut full_l_positions: VecDeque<(i32, i32)> = VecDeque::new();
                 let mut all_positions: VecDeque<(i32, i32)> = VecDeque::new();
                 if self.grid[(y + dy) as usize][x as usize] == '[' {
-                    fullL_positions.push_back((x, y + dy));
+                    full_l_positions.push_back((x, y + dy));
                 } else if self.grid[(y + dy) as usize][x as usize] == ']' {
-                    fullL_positions.push_back((x - 1, y + dy));
+                    full_l_positions.push_back((x - 1, y + dy));
                 } else {
                     // hit the wall
                     return;
@@ -140,7 +140,7 @@ impl Solution2 {
 
                 let mut can_move = true;
                 while can_move {
-                    while let Some((x, y)) = fullL_positions.pop_front() {
+                    while let Some((x, y)) = full_l_positions.pop_front() {
                         all_positions.push_back((x, y));
                         let new_y = (y + dy) as usize;
                         if self.grid[new_y][x as usize] == '#'
@@ -153,12 +153,12 @@ impl Solution2 {
                         {
                         } else {
                             if self.grid[new_y][x as usize] == '[' {
-                                fullL_positions.push_back((x, new_y as i32));
+                                full_l_positions.push_back((x, new_y as i32));
                             } else if self.grid[new_y][x as usize] == ']' {
-                                fullL_positions.push_back((x - 1, new_y as i32));
+                                full_l_positions.push_back((x - 1, new_y as i32));
                             }
                             if self.grid[new_y][x as usize + 1] == '[' {
-                                fullL_positions.push_back((x + 1, new_y as i32));
+                                full_l_positions.push_back((x + 1, new_y as i32));
                             }
                         }
                     }
@@ -184,7 +184,7 @@ impl Solution2 {
                         self.grid[(robotpos.1 + dy) as usize][robotpos.0 as usize] = '@';
                         can_move = false;
                     }
-                    fullL_positions = all_positions.clone();
+                    full_l_positions = all_positions.clone();
                 }
             }
         }
@@ -196,17 +196,12 @@ struct Solution {
 }
 
 impl Solution {
-    fn print(&self) {
-        for row in &self.grid {
-            println!("{}", row.iter().collect::<String>());
-        }
-    }
     fn score(&self) -> u32 {
         let mut score = 0;
         for (y, row) in self.grid.iter().enumerate() {
             for (x, c) in row.iter().enumerate() {
                 if *c == 'O' {
-                    score += (x + (100 * y));
+                    score += x + (100 * y);
                 }
             }
         }

@@ -57,18 +57,13 @@ impl Program {
         self.output.clear();
     }
     fn run(&mut self) -> Vec<i64> {
-        let mut i =0;
         while self.pointer < self.instructions.len() {
             self.process();
-            i+=1;
-            // if i > 10{
-            //     break;
-            // }
         }
         self.output.clone()
     }
     fn combo_operand(&self, id:usize)->usize{
-        if id >= 0 && id <= 3 {
+        if id <= 3 {
             return id;
         }
         if id == 4{

@@ -1,5 +1,5 @@
 use std::cmp::Ordering;
-use std::collections::{BinaryHeap, HashMap, HashSet, VecDeque};
+use std::collections::{BinaryHeap, HashMap, HashSet};
 
 fn shortest_path_with_cost(
     grid: &Vec<Vec<char>>,
@@ -107,7 +107,7 @@ pub fn part1(input: &str) -> u32 {
     let start = (start.0, start.1, Direction::Right, Direction::Right);
 
     let asn =
-        shortest_path_with_cost(&grid, start, end, true).map(|(cost)| (1000 + cost as u32));
+        shortest_path_with_cost(&grid, start, end, true).map(|cost| (1000 + cost as u32));
 
     //add 9 to 7 unique values
 

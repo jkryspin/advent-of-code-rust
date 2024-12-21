@@ -8,7 +8,6 @@ pub fn part1(input: &str) -> i128 {
 pub fn part2(input: &str) -> i128 {
     let mut output = parse_input(input);
     process_output_part2(&mut output);
-    print_output(&output);
     calculate_sum(&output)
 }
 
@@ -51,7 +50,6 @@ fn process_output_part1(output: &mut Vec<i128>) {
 fn process_output_part2(output: &mut Vec<i128>) {
     let mut i = output.len() - 1;
     while i > 0 {
-        print_output(output);
         if output[i] == -1 {
             i -= 1;
             continue;
@@ -92,22 +90,4 @@ fn calculate_sum(output: &Vec<i128>) -> i128 {
         .filter(|(_, &x)| x != -1)
         .map(|(i, &c)| i as i128 * c)
         .sum()
-}
-
-fn print_output(output: &Vec<i128>) {
-    return;
-    println!(
-        "{}",
-        output
-            .iter()
-            .map(|x| {
-                if *x == -1 {
-                    ".".to_string()
-                } else {
-                    x.to_string()
-                }
-            })
-            .collect::<Vec<String>>()
-            .join("")
-    );
 }

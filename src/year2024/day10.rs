@@ -87,7 +87,6 @@ pub fn part2(input: &str) -> u32 {
         }
     }
 
-    let mut count = 0;
     let mut unique_paths = HashSet::new();
 
     for (x, y) in positions {
@@ -96,7 +95,6 @@ pub fn part2(input: &str) -> u32 {
         while !queue.is_empty() {
             let (x, y, path) = queue.remove(0);
             if grid[y][x] == 9 {
-                count += 1;
                 unique_paths.insert(path);
                 continue;
             }

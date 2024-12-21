@@ -1,7 +1,6 @@
 //! # Historian Hysteria
 
 use std::collections::HashMap;
-use crate::util::parse::*;
 
 type Input = String;
 

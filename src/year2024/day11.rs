@@ -4,7 +4,7 @@ pub fn part1(input: &str) -> u128 {
 }
 
 fn solve(input: &str, iterations: usize) -> u128 {
-    let mut stones = input
+    let stones = input
         .lines().next().unwrap()
         .split(" ")
         .map(|s|{

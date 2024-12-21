@@ -38,20 +38,3 @@ fn s(stone: u128, iterations: usize) -> u128 {
 pub fn part2(input: &str) -> u128 {
     solve(input, 75)
 }
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn test_part1() {
-        let result = part1(&advent_of_code::template::read_file("examples", DAY));
-        assert_eq!(result, Some(55312));
-    }
-
-    #[test]
-    fn test_part2() {
-        let result = part2(&advent_of_code::template::read_file("examples", DAY));
-        assert_eq!(result, Some(65601038650482));
-    }
-}

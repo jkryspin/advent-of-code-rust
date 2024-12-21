@@ -162,24 +162,3 @@ pub fn part2(input: &str) -> u32 {
     }
     count
 }
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn test_part1() {
-        let input = &advent_of_code::template::read_file("examples", DAY);
-        let plot = Plot::create(input);
-        let count = plot.count_ways(5, 0);
-        assert_eq!(count, 1);
-        let result = part1(&advent_of_code::template::read_file("examples", DAY));
-        assert_eq!(result, Some(18));
-    }
-
-    #[test]
-    fn test_part2() {
-        let result = part2(&advent_of_code::template::read_file("examples", DAY));
-        assert_eq!(result, Some(9));
-    }
-}

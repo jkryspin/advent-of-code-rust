@@ -2,9 +2,8 @@
 
 use std::collections::HashMap;
 
-type Input = String;
 
-pub fn part1(input: &Input) -> usize {
+pub fn part1(input: &str) -> usize {
 
     let lines = input.lines().collect::<Vec<_>>();
     let mut lefts = vec![];
@@ -27,7 +26,7 @@ pub fn part1(input: &Input) -> usize {
     diffs as usize
 }
 
-pub fn part2(input: &Input) -> u32 {
+pub fn part2(input: &str) -> u32 {
     let lines = input.lines().collect::<Vec<_>>();
     let mut lefts = vec![];
     let mut rights = vec![];

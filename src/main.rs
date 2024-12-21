@@ -44,15 +44,16 @@ fn main() {
             duration += instant.elapsed();
 
             // Display part1_time
+            // round to 1 decimal place
             if part1_time > 1000 {
-                println!("    Part 1: {part1} ({} ms)", part1_time / 1000);
+                println!("    Part 1: {part1} ({:.1} ms)", part1_time as f32 / 1000f32);
             } else {
                 println!("    Part 1: {part1} ({} µs)", part1_time);
             }
 
             // Display part2_time
             if part2_time > 1000 {
-                println!("    Part 2: {part2} ({} ms)", part2_time / 1000);
+                println!("    Part 2: {part2} ({:.1} ms)", part2_time as f32 / 1000f32);
             } else {
                 println!("    Part 2: {part2} ({} µs)", part2_time);
             }

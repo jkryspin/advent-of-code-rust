@@ -124,20 +124,3 @@ fn calculate_costs(costs: &[Vec<u32>], moves_saved: &[((usize, usize), (usize, u
         Some(steps_saved as u32)
     }).collect()
 }
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn test_part1() {
-        let result = part1(&advent_of_code::template::read_file("examples", DAY));
-        assert_eq!(result, None);
-    }
-
-    #[test]
-    fn test_part2() {
-        let result = part2(&advent_of_code::template::read_file("examples", DAY));
-        assert_eq!(result, None);
-    }
-}

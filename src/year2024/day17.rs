@@ -147,25 +147,3 @@ impl Program {
         }
     }
 }
-
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn test_part1() {
-        let result = part1(&advent_of_code::template::read_file("examples", DAY));
-        assert_eq!(result, None);
-    }
-
-    #[test]
-    fn test_part2() {
-        let result = part2(r#"Register A: 2024
-Register B: 0
-Register C: 0
-
-Program: 0,3,5,4,3,0"#);
-        assert_eq!(result, Some(117440));
-    }
-}

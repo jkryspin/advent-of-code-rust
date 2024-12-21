@@ -39,21 +39,3 @@ pub fn part2(input: &str) -> u32 {
     }
     count
 }
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn test_part1() {
-        let result = part1(&advent_of_code::template::read_file("examples", DAY));
-        assert_eq!(result, Some(161));
-    }
-
-    #[test]
-    fn test_part2() {
-        let result =
-            part2("xmul(2,4)&mul[3,7]!^don't()_mul(5,5)+mul(32,64](mul(11,8)undo()?mul(8,5))");
-        assert_eq!(result, Some(48));
-    }
-}

@@ -79,20 +79,3 @@ fn bfs(grid: &Vec<Vec<char>>, start: (usize, usize), end: (usize, usize)) -> i32
     }
     0
 }
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn test_part1() {
-        let result = part1(&advent_of_code::template::read_file("examples", DAY));
-        assert_eq!(result, Some(12));
-    }
-
-    #[test]
-    fn test_part2() {
-        let result = part2(&advent_of_code::template::read_file("examples", DAY));
-        assert_eq!(result, None);
-    }
-}

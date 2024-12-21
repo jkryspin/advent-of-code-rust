@@ -63,20 +63,3 @@ impl From<&str> for Claw {
         }
     }
 }
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn test_part1() {
-        let result = part1(&advent_of_code::template::read_file("examples", DAY));
-        assert_eq!(result, Some(480));
-    }
-
-    #[test]
-    fn test_part2() {
-        let result = part2(&advent_of_code::template::read_file("examples", DAY));
-        assert_eq!(result, None);
-    }
-}

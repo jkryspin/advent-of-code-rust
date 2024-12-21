@@ -150,26 +150,3 @@ fn find_neighbors(x: usize, y: usize, grid: &Vec<Vec<char>>) -> Vec<(usize, usiz
 pub fn part2(input: &str) -> u32 {
     solve(input, false)
 }
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn test_part1() {
-        let result = part1(&advent_of_code::template::read_file("examples", DAY));
-        assert_eq!(result, Some(1930));
-    }
-
-    #[test]
-    fn test_part2() {
-        let result = part2(&advent_of_code::template::read_file("examples", DAY));
-        assert_eq!(result, Some(1206));
-    }
-
-    #[test]
-    fn test_part2_a() {
-        let result = part2("AAAA\nBBCD\nBBCC\nEEEC");
-        assert_eq!(result, Some(80));
-    }
-}

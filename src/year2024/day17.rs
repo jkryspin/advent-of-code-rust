@@ -13,7 +13,6 @@ pub fn part1(input: &str) -> u32
 
 pub fn part2(input: &str) -> i128 {
     let mut program = Program::from_str(input);
-    let expected_result = program.instructions.iter().map(|i| i.to_string()).collect::<Vec<String>>().join(",");
 
     let mut todo = vec![(1, 0)];
     let prog = program.instructions.clone().iter().map(|&i|i as i64).collect::<Vec<i64>>();
@@ -23,14 +22,14 @@ pub fn part2(input: &str) -> i128 {
         for a in a..a+8 {
             program.clear();
             program.registers.insert('A', a);
-            let start = prog.len() - i;
-            if start >16 {
+            let start = prog.len() as i128 - i;
+            if start >16 || start <0 {
                 continue;
             }
 
-            if program.run() == &prog[start..] {
+            if program.run() == &prog[start as usize..] {
                 todo.push((i + 1, a * 8));
-                if i == prog.len() {
+                if i == prog.len() as i128 {
                     println!("{}", a);
                     lowest = lowest.min(a);
                 }

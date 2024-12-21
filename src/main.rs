@@ -78,9 +78,12 @@ macro_rules! run {
                 let wrapper = |data: String| {
                     use $year::$day::*;
 
-                    let input = parse(&data);
-                    let part1 = part1(&input);
-                    let part2 = part2(&input);
+                    // print year and day
+                    // let input = parse(&data);
+
+                    let part1 = part1(&data);
+                    let part2 = part2(&data);
+
 
                     (part1.to_string(), part2.to_string())
                 };
@@ -137,7 +140,7 @@ macro_rules! run {
 // );
 //
 run!(year2024
-    day01
-    // day02, day03, day04, day05, day06, day07, day08, day09, day10, day11, day12, day13,
-    // day14, day15, day16, day17, day18, day19, day20
+    day01,
+    day02, day03, day04, day05, day06, day07, day08, day09, day10, day11, day12, day13,
+    day14, day15, day16, day17, day18, day19, day20
 );

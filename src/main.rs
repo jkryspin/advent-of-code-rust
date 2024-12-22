@@ -24,7 +24,7 @@ fn main() {
         // .chain(year2016())
         // .chain(year2017())
         // .chain(year2018())
-        // .chain(year2019())
+        .chain(year2019())
         // .chain(year2020())
         // .chain(year2021())
         // .chain(year2022())
@@ -131,10 +131,11 @@ macro_rules! run {
 //     day14, day15, day16, day17, day18, day19, day20, day21, day22, day23, day24, day25
 // );
 //
-// run!(year2019
-//     day01, day02, day03, day04, day05, day06, day07, day08, day09, day10, day11, day12, day13,
-//     day14, day15, day16, day17, day18, day19, day20, day21, day22, day23, day24, day25
-// );
+run!(year2019
+    day01, day02, day03
+    // , day03, day04, day05, day06, day07, day08, day09, day10, day11, day12, day13,
+    // day14, day15, day16, day17, day18, day19, day20, day21, day22, day23, day24, day25
+);
 //
 // run!(year2020
 //     day01, day02, day03, day04, day05, day06, day07, day08, day09, day10, day11, day12, day13,

@@ -19,8 +19,8 @@ pub fn part2(input: &str) -> usize {
     let secrets:Vec<HashMap<[i64; 4],i64>> = input.lines().map(|l| l.parse::<i64>().unwrap()).map(|secret| {
         let mut i=0;
         let mut secret = secret;
-        let mut deltas_to_cost:HashMap<[i64;4],i64> = HashMap::new();
-        let mut costs = Vec::new();
+        let mut deltas_to_cost:HashMap<[i64;4],i64> = HashMap::with_capacity(2000);
+        let mut costs = Vec::with_capacity(2010);
         costs.push(price_of_secret(secret));
         while i<=2000 {
             let new_secret = generate_secret(secret);
@@ -55,7 +55,7 @@ pub fn part2(input: &str) -> usize {
     *max as usize
 }
 fn price_of_secret(secret:i64) -> i64 {
-    secret.to_string().chars().last().unwrap().to_digit(10).unwrap() as i64
+    secret % 10
 }
 
 fn generate_secret(curr:i64) -> i64 {

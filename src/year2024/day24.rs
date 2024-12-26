@@ -1,4 +1,7 @@
 use std::collections::{HashMap, HashSet};
+use std::fs;
+use petgraph::dot::{Config, Dot};
+use petgraph::graph::DiGraph;
 
 pub fn part1(input:&str) -> u64 {
     let parts: Vec<&str> = input.split("\n\n").collect();
@@ -44,9 +47,9 @@ pub fn part1(input:&str) -> u64 {
         for gate in &gates {
             if let (Some(a_val), Some(b_val)) = (wires[&gate.a], wires[&gate.b]) {
                 let output_val = match gate.op {
-                    crate::year2024::day24::Op::AND => a_val & b_val,
-                    crate::year2024::day24::Op::OR => a_val | b_val,
-                    crate::year2024::day24::Op::XOR => a_val ^ b_val,
+                    Op::AND => a_val & b_val,
+                    Op::OR => a_val | b_val,
+                    Op::XOR => a_val ^ b_val,
                 };
                 wires.insert(gate.output.clone(), Some(output_val));
                 progress = true;
@@ -80,7 +83,6 @@ pub fn part1(input:&str) -> u64 {
     let binary_string = binary_values.join("");
     let result = u64::from_str_radix(&binary_string, 2).unwrap();
 
-    println!("{}", result);
     result
 }
 
@@ -119,7 +121,7 @@ fn has_input(gate: &Gate, input: &str) -> bool {
     gate.a == input || gate.b == input
 }
 
-pub fn part2(input: &str) -> u64 {
+pub fn part2(input: &str) -> String {
     let parts: Vec<&str> = input.trim().split("\n\n").collect();
     let wires_raw: Vec<&str> = parts[0].lines().collect();
     let gates_raw: Vec<&str> = parts[1].lines().collect();
@@ -170,8 +172,6 @@ pub fn part2(input: &str) -> u64 {
                 flags.insert(gate.output.clone());
             }
             continue;
-        } else if gate.output == "z00" {
-            flags.insert(gate.output.clone());
         }
 
         if is_output(gate) {
@@ -240,7 +240,65 @@ pub fn part2(input: &str) -> u64 {
 
     let mut flags_arr: Vec<String> = flags.into_iter().collect();
     flags_arr.sort();
-    println!("{}", flags_arr.join(","));
+    flags_arr.join(",")
+}
 
-    0
+pub fn part3() -> String {
+    let input = fs::read_to_string("/Users/johnkryspin/Documents/projects/advent-of-code-rust/input/year2024/day24.txt").unwrap();
+    let parts: Vec<&str> = input.trim().split("\n\n").collect();
+    let wires_raw: Vec<&str> = parts[0].lines().collect();
+    let gates_raw: Vec<&str> = parts[1].lines().collect();
+
+    let mut wires: HashMap<String, Option<u32>> = HashMap::new();
+    for line in &wires_raw {
+        let parts: Vec<&str> = line.split(": ").collect();
+        wires.insert(parts[0].to_string(), Some(parts[1].parse().unwrap()));
+    }
+
+    let mut gates: Vec<Gate> = Vec::new();
+    for line in gates_raw {
+        let parts: Vec<&str> = line.split(" -> ").collect();
+        let inputs: Vec<&str> = parts[0].split_whitespace().collect();
+        let gate = Gate {
+            a: inputs[0].to_string(),
+            op: match inputs[1] {
+                "AND" => Op::AND,
+                "OR" => Op::OR,
+                "XOR" => Op::XOR,
+                _ => panic!("Unknown operation"),
+            },
+            b: inputs[2].to_string(),
+            output: parts[1].to_string(),
+        };
+        gates.push(gate);
+
+        if !wires.contains_key(inputs[0]) {
+            wires.insert(inputs[0].to_string(), None);
+        }
+        if !wires.contains_key(inputs[2]) {
+            wires.insert(inputs[2].to_string(), None);
+        }
+        if !wires.contains_key(parts[1]) {
+            wires.insert(parts[1].to_string(), None);
+        }
+    }
+
+    // Create a directed graph
+    let mut graph = DiGraph::new();
+    let mut node_indices = HashMap::new();
+
+    // Add nodes and edges to the graph
+    for gate in &gates {
+        let a_index = *node_indices.entry(&gate.a).or_insert_with(|| graph.add_node(gate.a.clone()));
+        let b_index = *node_indices.entry(&gate.b).or_insert_with(|| graph.add_node(gate.b.clone()));
+        let output_index = *node_indices.entry(&gate.output).or_insert_with(|| graph.add_node(gate.output.clone()));
+
+        graph.add_edge(a_index, output_index, format!("{:?}", gate.op));
+        graph.add_edge(b_index, output_index, format!("{:?}", gate.op));
+    }
+
+    // Print the graph in DOT format
+    println!("{:?}", Dot::with_config(&graph, &[Config::EdgeNoLabel]));
+
+    "Graph printed".to_string()
 }

@@ -61,3 +61,8 @@ fn part1_test() {
 //     assert_eq!(part2(EXAMPLE), "co,de,ka,ta");
 // }
 
+#[test]
+fn part_3_test() {
+    part3();
+}
+

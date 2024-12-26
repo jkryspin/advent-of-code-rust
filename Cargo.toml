@@ -9,3 +9,5 @@ rust-version = "1.83"
 [dependencies]
 cached = "0.54.0"
 regex = "1.11.1"
+petgraph = "0.6"
+colored = "2.0"

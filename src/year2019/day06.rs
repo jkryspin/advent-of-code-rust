@@ -1,4 +1,4 @@
-use std::collections::{HashMap, HashSet};
+use std::collections::HashMap;
 
 pub fn part1(input: &str) -> i64 {
     let tree = Tree::from_input(input);
@@ -15,13 +15,13 @@ pub fn part2(input: &str) -> u32 {
 }
 
 struct Node {
-    name: String,
+    _name: String,
     children: Vec<String>,
 }
 
 struct Tree {
     nodes: HashMap<String, Node>,
-    root: String,
+    _root: String,
 }
 
 impl Tree {
@@ -32,18 +32,18 @@ impl Tree {
             let parent = parts.next().unwrap();
             let child = parts.next().unwrap();
             nodes.entry(parent.to_string()).or_insert(Node {
-                name: parent.to_string(),
+                _name: parent.to_string(),
                 children: vec![],
             });
             nodes.entry(child.to_string()).or_insert(Node {
-                name: child.to_string(),
+                _name: child.to_string(),
                 children: vec![],
             });
             nodes.get_mut(parent).unwrap().children.push(child.to_string());
         }
         Tree {
             nodes,
-            root: "COM".to_string(),
+            _root: "COM".to_string(),
         }
     }
     fn depth(&self,source:&str, target: &str) -> u32 {

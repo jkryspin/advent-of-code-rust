@@ -231,7 +231,7 @@ pub fn part2(input: &str) -> String {
 
         let or_match_output = &or_matches[0].output;
         let correct_output = to_check.iter().find(|&&output| output != or_match_output).unwrap();
-        flags.insert(correct_output.clone().clone());
+        flags.insert((*correct_output).clone());
     }
 
     if flags.len() != 8 {

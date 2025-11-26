@@ -1,0 +1,156 @@
+use Dir::{East, North, South, West};
+use ndarray::{Array2, Axis};
+use std::fmt;
+
+pub fn part1(input: &str) -> usize {
+    let lines = input.lines().collect::<Vec<_>>();
+    let mut grid = Array2::<char>::default((lines.len(), lines[0].len()));
+    for (i, mut row) in grid.axis_iter_mut(Axis(0)).enumerate() {
+        for (j, col) in row.iter_mut().enumerate() {
+            let c = lines.get(i).unwrap().chars().nth(j).unwrap();
+            *col = c;
+        }
+    }
+    simulate(&North, &mut grid);
+    score(&grid)
+}
+
+#[derive(Eq, PartialOrd, PartialEq, Debug)]
+enum Dir {
+    North,
+    South,
+    East,
+    West,
+}
+impl fmt::Display for Dir {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "{:?}", self)
+    }
+}
+fn score(grid: &Array2<char>) -> usize {
+    let mut score = 0;
+    for (i, row) in grid.axis_iter(Axis(0)).enumerate() {
+        for c in row.iter() {
+            if c == &'O' {
+                score += grid.len_of(Axis(0)) - i;
+            }
+        }
+    }
+    score
+}
+
+fn simulate(dir: &Dir, grid: &mut Array2<char>) {
+    let mut round_rocks = vec![];
+    let mut cube_rocks = vec![];
+    for (i, row) in grid.axis_iter_mut(Axis(0)).enumerate() {
+        for (j, c) in row.iter().enumerate() {
+            if c == &'O' {
+                round_rocks.push((j, i))
+            }
+
+            if c == &'#' {
+                cube_rocks.push((j, i))
+            }
+        }
+    }
+    let diff = match dir {
+        North => (0, -1),
+        South => (0, 1),
+        East => (1, 0),
+        West => (-1, 0),
+    };
+    round_rocks.sort_by(|(ax, ay), (bx, by)| {
+        return match dir {
+            North => ay.cmp(by),
+            South => by.cmp(ay),
+            East => bx.cmp(ax),
+            West => ax.cmp(bx),
+        };
+    });
+    round_rocks.iter().for_each(|(x, y)| {
+        let mut curr_y = *y as i32 + diff.1;
+        let mut curr_x = *x as i32 + diff.0;
+        while grid.get((curr_y as usize, curr_x as usize)).unwrap_or(&'#') == &'.' {
+            curr_y += diff.1;
+            curr_x += diff.0;
+        }
+        curr_y -= diff.1;
+        curr_x -= diff.0;
+
+        *grid.get_mut((y.clone(), x.clone())).unwrap() = '.';
+        *grid.get_mut((curr_y as usize, curr_x as usize)).unwrap() = 'O';
+    });
+}
+
+pub fn part2(input: &str) -> usize {
+    let lines = input.lines().collect::<Vec<_>>();
+    let mut grid = ndarray::Array2::<char>::default((lines.len(), lines[0].len()));
+    for (i, mut row) in grid.axis_iter_mut(Axis(0)).enumerate() {
+        for (j, col) in row.iter_mut().enumerate() {
+            let c = lines.get(i).unwrap().chars().nth(j).unwrap();
+            *col = c;
+        }
+    }
+    let dirs = [North, West, South, East];
+    let mut i = 0;
+    let mut seen = Vec::<String>::new();
+    let mut ans_map = Vec::<usize>::new();
+    let mut steps = 0;
+    let (cycle_start, steps) = loop {
+        let curr_dir = &dirs[i];
+
+        simulate(curr_dir, &mut grid);
+        if curr_dir == &East {
+            ans_map.push(score(&grid));
+            match seen
+                .iter()
+                .enumerate()
+                .find(|(_, p)| p == &&(curr_dir.to_string() + &grid.stringify()))
+            {
+                None => {}
+                Some((cycle_start, _)) => {
+                    break (cycle_start, steps);
+                }
+            }
+
+            seen.push(curr_dir.to_string() + &grid.stringify());
+            steps += 1;
+        }
+
+        i += 1;
+        if i > 3 {
+            i = 0;
+        }
+    };
+    let cycle_length = steps - cycle_start;
+    let target = 1000000000usize;
+
+    let target_pos_in_cycle = (target - cycle_start) % cycle_length;
+    let answer_pos = cycle_start + target_pos_in_cycle - 1;
+
+    ans_map[answer_pos]
+}
+
+trait Stringify {
+    fn stringify(&self) -> String;
+}
+impl Stringify for Array2<char> {
+    fn stringify(&self) -> String {
+        let mut s = Vec::<char>::new();
+        for row in self.axis_iter(Axis(0)) {
+            for col in row.iter() {
+                s.push(*col);
+            }
+        }
+        return s.iter().collect();
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    // Test removed - needs example data
+
+    // Test removed - needs example data
+}

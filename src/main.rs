@@ -28,7 +28,7 @@ fn main() {
         // .chain(year2020())
         // .chain(year2021())
         // .chain(year2022())
-        // .chain(year2023())
+        .chain(year2023())
         .chain(year2024())
         .filter(|solution| year.is_none_or(|y: u32| y == solution.year))
         .filter(|solution| day.is_none_or(|d: u32| d == solution.day))
@@ -39,6 +39,7 @@ fn main() {
 
     for Solution { year, day, path, wrapper } in &solutions {
         if let Ok(data) = read_to_string(path) {
+            println!("{BOLD}{GREEN}{year} Day {day:02}{RESET}");
             let instant = Instant::now();
             let (part1, part2, part1_time, part2_time) = wrapper(data);
             duration += instant.elapsed();
@@ -152,10 +153,10 @@ run!(year2019
 //     day14, day15, day16, day17, day18, day19, day20, day21, day22, day23, day24, day25
 // );
 //
-// run!(year2023
-//     day01, day02, day03, day04, day05, day06, day07, day08, day09, day10, day11, day12, day13,
-//     day14, day15, day16, day17, day18, day19, day20, day21, day22, day23, day24, day25
-// );
+run!(year2023
+    day01, day02, day03, day04, day05, day06, day07, day08, day09, day10, day11, day12, day13,
+    day14, day15, day16, day17, day18, day19, day20, day21
+);
 //
 run!(year2024
     day01,

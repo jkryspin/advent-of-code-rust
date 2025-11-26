@@ -1,4 +1,6 @@
-use std::collections::{HashMap, HashSet};
+use rayon::prelude::*;
+use rustc_hash::FxHashSet;
+use std::time::Instant;
 
 
 pub fn part1(input: &str) -> usize {
@@ -9,94 +11,103 @@ pub fn part1(input: &str) -> usize {
 
     sol.count()
 }
-
 pub fn part2(input: &str) -> usize {
     let mut sol = Solution::new(input);
-    let mut count: usize = 0;
-    for _ in 0..6 {
-        count += sol.simulate_2() as usize;
+    let grid_size = 131;
+    let target = 26501365;
+
+    // Sample points: at 65, 196, 327 steps (which is 65 + 131*n for n=0,1,2)
+    let sample_points = vec![65, 65 + grid_size, 65 + grid_size * 2];
+    let mut values = vec![];
+
+    let mut steps = 0;
+    for &target_steps in &sample_points {
+        while steps < target_steps {
+            sol.simulate();
+            steps += 1;
+        }
+        values.push(sol.count());
     }
 
-    count
+    // Now we have 3 points: (0, values[0]), (1, values[1]), (2, values[2])
+    // Fit quadratic: f(n) = an² + bn + c
+    let y0 = values[0] as i64;
+    let y1 = values[1] as i64;
+    let y2 = values[2] as i64;
+
+    // Calculate coefficients
+    let a = (y2 - 2 * y1 + y0) / 2;
+    let b = y1 - y0 - a;
+    let c = y0;
+
+    // Calculate n for the target: target = 65 + 131*n, so n = (target - 65) / 131
+    let n = ((target - 65) / grid_size) as i64;
+
+    // Evaluate f(n) = an² + bn + c
+    let result = a * n * n + b * n + c;
+
+    result as usize
 }
 
 struct Solution {
-    grid: Vec<Vec<char>>,
-    positions: HashSet<(usize, usize)>,
-    positions_2: HashMap<(usize, usize), usize>,
+    positions: FxHashSet<(i32, i32)>,
+    next_positions: FxHashSet<(i32, i32)>,
+    walls: Vec<Vec<bool>>,
+    width: i32,
+    height: i32,
 }
 impl Solution {
     fn new(input: &str) -> Self {
         let grid: Vec<Vec<char>> = input.lines().map(|l| l.chars().collect()).collect();
+        let height = grid.len() as i32;
+        let width = grid[0].len() as i32;
+
         let start = grid
             .iter()
             .enumerate()
-            .find_map(|(y, row)| row.iter().position(|&c| c == 'S').map(|x| (x, y)))
+            .find_map(|(y, row)| row.iter().position(|&c| c == 'S').map(|x| (x as i32, y as i32)))
             .unwrap();
-        let mut map = HashMap::new();
-        map.insert(start, 1);
+
+        // Convert walls to 2D boolean array for O(1) lookup
+        let walls = grid
+            .iter()
+            .map(|row| row.iter().map(|&c| c == '#').collect())
+            .collect();
 
         Self {
-            grid,
             positions: vec![start].into_iter().collect(),
-            positions_2: map,
+            next_positions: FxHashSet::default(),
+            walls,
+            width,
+            height,
         }
     }
 
     fn simulate(&mut self) {
-        let mut new_positions = HashSet::new();
-        for (x, y) in &self.positions {
-            let x = *x as i32;
-            let y = *y as i32;
-            // for each dir
-            for (dx, dy) in &[(0, 1), (1, 0), (0, -1), (-1, 0)] {
+        self.next_positions.clear();
+
+        let width = self.width;
+        let height = self.height;
+
+        // Collect valid neighbors for each position
+        for &(x, y) in &self.positions {
+            for &(dx, dy) in &[(0, 1), (1, 0), (0, -1), (-1, 0)] {
                 let (nx, ny) = (x + dx, y + dy);
-                if nx < 0 || ny < 0 {
-                    continue;
-                }
-                if nx >= self.grid[0].len() as i32 || ny >= self.grid.len() as i32 {
-                    continue;
-                }
+                let wrapped_x = nx.rem_euclid(width) as usize;
+                let wrapped_y = ny.rem_euclid(height) as usize;
 
-                if self.grid[ny as usize][nx as usize] == '#' {
-                    continue;
-                }
+                // Safety: wrapped_x and wrapped_y are guaranteed to be in bounds due to rem_euclid
+                let is_wall = unsafe {
+                    *self.walls.get_unchecked(wrapped_y).get_unchecked(wrapped_x)
+                };
 
-                new_positions.insert((nx as usize, ny as usize));
+                if !is_wall {
+                    self.next_positions.insert((nx, ny));
+                }
             }
         }
-        self.positions = new_positions;
-    }
 
-    fn simulate_2(&mut self) -> u32 {
-        let mut seen = HashSet::new();
-        let mut new_positions = HashMap::new();
-        let mut count = 0;
-        for ((x, y), z) in &self.positions_2 {
-            let x = *x as i32;
-            let y = *y as i32;
-            // for each dir
-            for (dx, dy) in &[(0, 1), (1, 0), (0, -1), (-1, 0)] {
-                let (nx, ny) = (x + dx, y + dy);
-                // if nx or ny out of bounds, wrap to other side
-                let projected_nx = (nx) % self.grid[0].len() as i32;
-                let projected_ny = (ny) % self.grid.len() as i32;
-
-                if self.grid[projected_ny as usize][projected_nx as usize] == '#' {
-                    continue;
-                }
-
-                *new_positions
-                    .entry((projected_nx as usize, projected_ny as usize))
-                    .or_insert(0) += z;
-                if (!seen.contains(&(projected_nx as usize, projected_ny as usize))) {
-                    count += 1;
-                }
-                seen.insert((projected_nx as usize, projected_ny as usize));
-            }
-        }
-        self.positions_2 = new_positions;
-        count
+        std::mem::swap(&mut self.positions, &mut self.next_positions);
     }
 
     fn count(&self) -> usize {

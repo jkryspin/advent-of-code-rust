@@ -30,6 +30,7 @@ fn main() {
         // .chain(year2022())
         .chain(year2023())
         .chain(year2024())
+        .chain(year2025())
         .filter(|solution| year.is_none_or(|y: u32| y == solution.year))
         .filter(|solution| day.is_none_or(|d: u32| d == solution.day))
         .collect();
@@ -155,11 +156,15 @@ run!(year2019
 //
 run!(year2023
     day01, day02, day03, day04, day05, day06, day07, day08, day09, day10, day11, day12, day13,
-    day14, day15, day16, day17, day18, day19, day20, day21, day22
+    day14, day15, day16, day17, day18, day19, day20, day21, day22, day23, day24
 );
 //
 run!(year2024
     day01,
     day02, day03, day04, day05, day06, day07, day08, day09, day10, day11, day12, day13,
     day14, day15, day16, day17, day18, day19, day20, day21, day22,day23,  day24, day25
+);
+
+run!(year2025
+    day01, day02
 );

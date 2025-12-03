@@ -80,5 +80,5 @@ library!(year2024 "Locate the Chief Historian in time for the big Christmas slei
 );
 
 library!(year2025 "Advent of Code 2025"
-    day01, day02
+    day01, day02, day03, day04, day05, day06, day07, day08, day09, day10, day11, day12
 );

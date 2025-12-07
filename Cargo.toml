@@ -2,7 +2,7 @@
 name = "aoc"
 version = "2024.12.25"
 edition = "2021"
-rust-version = "1.83"
+rust-version = "1.91"
 
 [features]
 

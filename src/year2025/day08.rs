@@ -4,13 +4,13 @@ use std::collections::HashMap;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 struct Point {
-    x: i32,
-    y: i32,
-    z: i32,
+    x: i64,
+    y: i64,
+    z: i64,
 }
 
 impl Point {
-    fn distance_squared(&self, other: &Point) -> i32 {
+    fn distance_squared(&self, other: &Point) -> i64 {
         (self.x - other.x).pow(2) + (self.y - other.y).pow(2) + (self.z - other.z).pow(2)
     }
 }
@@ -19,7 +19,7 @@ fn parse_input(input: &str) -> Vec<Point> {
     input
         .lines()
         .map(|line| {
-            let parts: Vec<i32> = line.split(',').map(|s| s.parse().unwrap()).collect();
+            let parts: Vec<i64> = line.split(',').map(|s| s.parse().unwrap()).collect();
             Point {
                 x: parts[0],
                 y: parts[1],
@@ -80,12 +80,12 @@ impl UnionFind {
     }
 }
 
-pub fn part1(input: &str) -> usize {
+fn solve(input: &str, num_connections: usize) -> usize {
     let points = parse_input(input);
     let n = points.len();
 
     // Find all edges with their distances
-    let mut edges: Vec<(i32, usize, usize)> = Vec::new();
+    let mut edges: Vec<(i64, usize, usize)> = Vec::new();
     for i in 0..n {
         for j in (i + 1)..n {
             let dist = points[i].distance_squared(&points[j]);
@@ -96,9 +96,9 @@ pub fn part1(input: &str) -> usize {
     // Sort edges by distance
     edges.sort_by_key(|e| e.0);
 
-    // Add only the 10 shortest edges
+    // Add the specified number of shortest edges
     let mut uf = UnionFind::new(n);
-    for i in 0..1000.min(edges.len()) {
+    for i in 0..num_connections.min(edges.len()) {
         uf.union(edges[i].1, edges[i].2);
     }
 
@@ -110,8 +110,46 @@ pub fn part1(input: &str) -> usize {
     sizes.iter().take(3).product()
 }
 
+pub fn part1(input: &str) -> usize {
+    solve(input, 1000)
+}
+
 pub fn part2(input: &str) -> usize {
-    0
+    let points = parse_input(input);
+    let n = points.len();
+
+    // Find all edges with their distances
+    let mut edges: Vec<(i64, usize, usize)> = Vec::new();
+    for i in 0..n {
+        for j in (i + 1)..n {
+            let dist = points[i].distance_squared(&points[j]);
+            edges.push((dist, i, j));
+        }
+    }
+
+    // Sort edges by distance
+    edges.sort_by_key(|e| e.0);
+
+    // Add edges until we have only 1 component
+    let mut uf = UnionFind::new(n);
+    let mut num_components = n;
+    let mut last_edge = (0, 0);
+
+    for (_, i, j) in edges.iter() {
+        // Check if these nodes are in different components
+        if uf.find(*i) != uf.find(*j) {
+            uf.union(*i, *j);
+            num_components -= 1;
+            last_edge = (*i, *j);
+
+            if num_components == 1 {
+                break;
+            }
+        }
+    }
+
+    // Multiply the X coordinates of the last two connected junction boxes
+    (points[last_edge.0].x * points[last_edge.1].x) as usize
 }
 
 #[cfg(test)]
@@ -141,11 +179,11 @@ mod tests {
 
     #[test]
     fn test_part1() {
-        assert_eq!(part1(EXAMPLE), 40);
+        assert_eq!(solve(EXAMPLE, 10), 40);
     }
 
     #[test]
     fn test_part2() {
-        assert_eq!(part2(EXAMPLE), 0);
+        assert_eq!(part2(EXAMPLE), 25272);
     }
 }
